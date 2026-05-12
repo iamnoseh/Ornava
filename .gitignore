@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Ornava local uploads
+apps/api/uploads/input/*
+apps/api/uploads/output/*
+!apps/api/uploads/input/.gitkeep
+!apps/api/uploads/output/.gitkeep
