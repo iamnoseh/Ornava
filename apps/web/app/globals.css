@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  background: #0f0f0f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: #0f0f0f;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(122, 31, 31, 0.32), transparent 34rem),
+    radial-gradient(circle at 78% 12%, rgba(201, 162, 39, 0.18), transparent 30rem),
+    linear-gradient(135deg, #0f0f0f 0%, #17120f 48%, #0f0f0f 100%);
+  color: #f7efe5;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(201, 162, 39, 0.35);
+}
+
+.ornament-grid {
+  background-image:
+    linear-gradient(rgba(232, 220, 203, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232, 220, 203, 0.04) 1px, transparent 1px);
+  background-size: 54px 54px;
+  mask-image: radial-gradient(circle at center, black, transparent 72%);
+}
+
+.heritage-scrollbar {
+  scrollbar-color: rgba(201, 162, 39, 0.6) rgba(255, 255, 255, 0.08);
+}
