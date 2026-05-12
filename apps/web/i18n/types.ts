@@ -60,6 +60,8 @@ export interface Dictionary {
     recordEyebrow: string;
     recordTitle: string;
     download: string;
+    downloading: string;
+    downloadError: string;
     method: string;
     methodAi: string;
     methodSafe: string;

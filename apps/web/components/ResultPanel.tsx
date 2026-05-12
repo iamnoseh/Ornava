@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { apiAssetUrl } from "@/lib/config";
 import type { Dictionary } from "@/i18n/types";
 import type { RestorationResponse } from "@/types/restoration";
@@ -11,10 +13,40 @@ interface ResultPanelProps {
 
 export function ResultPanel({ result, copy }: ResultPanelProps) {
   const downloadUrl = apiAssetUrl(result.output_url);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
   const resultCopy = copy.result;
   const hasProviderIssue = Boolean(result.provider_error_code);
   const method = result.fallback_used || result.provider === "deterministic" ? resultCopy.methodSafe : resultCopy.methodAi;
   const modeLabel = copy.controls.modes[result.mode]?.label ?? result.mode;
+
+  async function handleDownload() {
+    setDownloadError(null);
+    setIsDownloading(true);
+
+    try {
+      const response = await fetch(downloadUrl);
+
+      if (!response.ok) {
+        throw new Error(`Download failed with status ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = objectUrl;
+      link.download = buildDownloadFileName(result.id, result.output_url);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
+    } catch {
+      setDownloadError(resultCopy.downloadError);
+    } finally {
+      setIsDownloading(false);
+    }
+  }
 
   return (
     <aside className="glass-panel rounded-lg p-5">
@@ -23,14 +55,24 @@ export function ResultPanel({ result, copy }: ResultPanelProps) {
           <p className="text-xs uppercase tracking-[0.28em] text-[var(--color-gold)]">{resultCopy.recordEyebrow}</p>
           <h2 className="mt-2 font-display text-3xl text-[var(--color-text)]">{resultCopy.recordTitle}</h2>
         </div>
-        <a
-          className="inline-flex min-h-11 items-center rounded-full bg-[var(--color-text)] px-5 text-sm font-semibold text-[var(--color-bg)] transition hover:opacity-90"
-          download
-          href={downloadUrl}
+        <button
+          className="inline-flex min-h-11 items-center rounded-full bg-[var(--color-text)] px-5 text-sm font-semibold text-[var(--color-bg)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-55"
+          disabled={isDownloading}
+          onClick={handleDownload}
+          type="button"
         >
-          {resultCopy.download}
-        </a>
+          {isDownloading ? resultCopy.downloading : resultCopy.download}
+        </button>
       </div>
+
+      {downloadError && (
+        <p
+          className="mt-4 rounded-lg border border-[color-mix(in_srgb,var(--color-red)_35%,transparent)] bg-[color-mix(in_srgb,var(--color-red)_10%,transparent)] p-3 text-sm leading-6 text-[var(--color-text)]"
+          role="alert"
+        >
+          {downloadError}
+        </p>
+      )}
 
       <dl className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
         <Meta label={resultCopy.method} value={method} tone={result.fallback_used ? "warn" : "normal"} />
@@ -63,6 +105,16 @@ export function ResultPanel({ result, copy }: ResultPanelProps) {
       </details>
     </aside>
   );
+}
+
+function buildDownloadFileName(id: string, outputUrl: string): string {
+  const fallbackExtension = ".jpg";
+  const path = outputUrl.split("?")[0] ?? "";
+  const extensionMatch = path.match(/\.[a-z0-9]+$/i);
+  const extension = extensionMatch?.[0] ?? fallbackExtension;
+  const safeId = id.replace(/[^a-z0-9-]/gi, "");
+
+  return `ornava-restored-${safeId || "image"}${extension}`;
 }
 
 function Meta({ label, value, tone = "normal" }: { label: string; value: string; tone?: "normal" | "warn" }) {
