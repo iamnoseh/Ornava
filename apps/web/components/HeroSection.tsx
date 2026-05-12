@@ -11,7 +11,7 @@ interface HeroSectionProps {
 
 export function HeroSection({ copy }: HeroSectionProps) {
   return (
-    <section className="section-shell grid min-h-[calc(100vh-5rem)] items-center gap-10 py-16 lg:grid-cols-[1.05fr_0.95fr]" id="top">
+    <section className="section-shell grid min-h-[calc(100vh-4rem)] items-center gap-12 py-14 lg:grid-cols-[1.02fr_0.98fr]" id="top">
       <div>
         <motion.p
           animate={{ opacity: 1, y: 0 }}
@@ -49,16 +49,18 @@ export function HeroSection({ copy }: HeroSectionProps) {
 
       <motion.div
         animate={{ opacity: 1, y: 0 }}
-        className="glass-panel relative overflow-hidden rounded-[36px] p-5"
+        className="museum-frame relative overflow-hidden rounded-lg p-3 sm:p-4"
         initial={{ opacity: 0, y: 20 }}
         transition={{ delay: 0.16, duration: 0.75 }}
       >
-        <div className="absolute inset-0 bg-[url('/ornament-field.svg')] bg-cover bg-center opacity-20" />
-        <div className="relative aspect-[4/3] overflow-hidden rounded-[28px] border border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-surface)_72%,transparent)]">
-          <div className="absolute inset-8 rounded-full border border-[color-mix(in_srgb,var(--color-gold)_34%,transparent)]" />
-          <div className="absolute left-1/2 top-1/2 h-52 w-52 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[color-mix(in_srgb,var(--color-red)_42%,transparent)]" />
-          <div className="absolute inset-x-10 top-1/2 h-px bg-[color-mix(in_srgb,var(--color-gold)_36%,transparent)]" />
-          <div className="absolute inset-y-10 left-1/2 w-px bg-[color-mix(in_srgb,var(--color-gold)_36%,transparent)]" />
+        <div className="relative aspect-[4/3] overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
+          <div className="absolute inset-0 bg-[url('/ornament-field.svg')] bg-cover bg-center" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_0%,color-mix(in_srgb,var(--color-bg)_18%,transparent)_72%,color-mix(in_srgb,var(--color-bg)_50%,transparent)_100%)]" />
+          <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3 rounded-full border border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-bg)_72%,transparent)] px-4 py-3 text-xs font-semibold text-[var(--color-text)] backdrop-blur-md">
+            <span>{copy.visualLabel}</span>
+            <span className="h-px flex-1 bg-[color-mix(in_srgb,var(--color-gold)_36%,transparent)]" />
+            <span className="text-[var(--color-gold)]">Ornava</span>
+          </div>
         </div>
       </motion.div>
     </section>

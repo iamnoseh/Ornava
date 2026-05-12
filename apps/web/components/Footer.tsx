@@ -5,7 +5,7 @@ interface FooterProps {
 }
 
 export function Footer({ copy }: FooterProps) {
-  const links = [copy.nav.features, copy.nav.howItWorks, copy.nav.about, copy.nav.restoration];
+  const links = [copy.nav.features, copy.nav.process, copy.nav.principles, copy.nav.restoration];
 
   return (
     <footer className="border-t border-[var(--color-border)] py-10">

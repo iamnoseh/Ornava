@@ -36,7 +36,7 @@ export function RestorationControls({
             return (
             <button
               className={cx(
-                "min-h-[92px] rounded-2xl border p-4 text-left transition disabled:cursor-not-allowed disabled:opacity-60",
+                "min-h-[92px] rounded-lg border p-4 text-left transition disabled:cursor-not-allowed disabled:opacity-60",
                 mode === value
                   ? "border-[var(--color-gold)] bg-[color-mix(in_srgb,var(--color-gold)_16%,transparent)]"
                   : "border-[var(--color-border)] bg-[var(--color-soft)] hover:border-[color-mix(in_srgb,var(--color-gold)_46%,transparent)]",
@@ -54,7 +54,7 @@ export function RestorationControls({
         </div>
       </div>
 
-      <label className="flex min-h-16 items-center justify-between gap-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-soft)] px-4">
+      <label className="flex min-h-16 items-center justify-between gap-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-soft)] px-4">
         <span>
           <span className="block text-sm font-semibold text-[var(--color-text)]">{copy.aiTitle}</span>
           <span className="block text-xs text-[var(--color-muted)]">{copy.aiDescription}</span>

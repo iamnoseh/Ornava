@@ -11,7 +11,7 @@ export function Panel({ children, className }: PanelProps) {
   return (
     <section
       className={cx(
-        "glass-panel rounded-[28px]",
+        "glass-panel rounded-lg",
         className,
       )}
     >

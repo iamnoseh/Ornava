@@ -105,7 +105,7 @@ export function RestorationWorkspace({ copy }: RestorationWorkspaceProps) {
       {result && (
         <motion.div animate={{ opacity: 1, y: 0 }} className="mt-10 grid gap-5 xl:grid-cols-[1fr_360px]" initial={{ opacity: 0, y: 18 }}>
           <BeforeAfterViewer copy={copy.result} result={result} />
-          <ResultPanel copy={copy.result} result={result} />
+          <ResultPanel copy={copy} result={result} />
         </motion.div>
       )}
 

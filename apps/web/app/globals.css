@@ -3,37 +3,35 @@
 @tailwind utilities;
 
 :root {
-  --color-bg: #0f0d0a;
-  --color-surface: #1b1712;
-  --color-surface-strong: #241d16;
-  --color-text: #e8dccb;
-  --color-muted: rgba(232, 220, 203, 0.68);
-  --color-soft: rgba(232, 220, 203, 0.1);
-  --color-border: rgba(232, 220, 203, 0.14);
-  --color-red: #7a1f1f;
-  --color-gold: #c9a227;
-  --color-bronze: #5c4632;
+  --color-bg: #11100e;
+  --color-surface: #1d1915;
+  --color-surface-strong: #282019;
+  --color-text: #eee2cf;
+  --color-muted: rgba(238, 226, 207, 0.68);
+  --color-soft: rgba(238, 226, 207, 0.075);
+  --color-border: rgba(238, 226, 207, 0.15);
+  --color-red: #8e2e26;
+  --color-gold: #c59b4a;
+  --color-bronze: #8a6741;
   --hero-wash:
-    radial-gradient(circle at 16% 16%, rgba(122, 31, 31, 0.28), transparent 32rem),
-    radial-gradient(circle at 78% 8%, rgba(201, 162, 39, 0.18), transparent 34rem),
-    linear-gradient(135deg, #0f0d0a 0%, #18130f 54%, #0f0d0a 100%);
+    linear-gradient(180deg, rgba(197, 155, 74, 0.08), transparent 20rem),
+    linear-gradient(135deg, #11100e 0%, #181512 50%, #0e0d0b 100%);
 }
 
 :root[data-theme="light"] {
-  --color-bg: #f7f1e7;
-  --color-surface: #fff8ec;
-  --color-surface-strong: #efe1cc;
-  --color-text: #2a2118;
-  --color-muted: rgba(42, 33, 24, 0.68);
-  --color-soft: rgba(92, 70, 50, 0.09);
-  --color-border: rgba(92, 70, 50, 0.18);
-  --color-red: #7a1f1f;
-  --color-gold: #b8911e;
-  --color-bronze: #5c4632;
+  --color-bg: #f4ecdf;
+  --color-surface: #fffaf0;
+  --color-surface-strong: #ead9bd;
+  --color-text: #2b2118;
+  --color-muted: rgba(43, 33, 24, 0.68);
+  --color-soft: rgba(114, 76, 42, 0.08);
+  --color-border: rgba(105, 72, 42, 0.2);
+  --color-red: #8b2c24;
+  --color-gold: #a97924;
+  --color-bronze: #704c2c;
   --hero-wash:
-    radial-gradient(circle at 15% 16%, rgba(122, 31, 31, 0.12), transparent 31rem),
-    radial-gradient(circle at 82% 10%, rgba(184, 145, 30, 0.2), transparent 34rem),
-    linear-gradient(135deg, #f7f1e7 0%, #fff8ec 48%, #ecdcc4 100%);
+    linear-gradient(180deg, rgba(139, 44, 36, 0.08), transparent 20rem),
+    linear-gradient(135deg, #f4ecdf 0%, #fffaf0 48%, #ead9bd 100%);
 }
 
 * {
@@ -54,6 +52,18 @@ body {
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
 }
 
+body::before {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background-image:
+    linear-gradient(90deg, color-mix(in srgb, var(--color-text) 3%, transparent) 1px, transparent 1px),
+    linear-gradient(color-mix(in srgb, var(--color-text) 3%, transparent) 1px, transparent 1px);
+  background-size: 120px 120px;
+  mask-image: linear-gradient(to bottom, black, transparent 70%);
+}
+
 button,
 input {
   font: inherit;
@@ -69,9 +79,9 @@ button {
 
 .ornament-grid {
   background-image:
-    linear-gradient(color-mix(in srgb, var(--color-text) 6%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--color-text) 6%, transparent) 1px, transparent 1px);
-  background-size: 56px 56px;
+    radial-gradient(circle at center, color-mix(in srgb, var(--color-gold) 10%, transparent) 0 1px, transparent 1px),
+    linear-gradient(45deg, transparent 48%, color-mix(in srgb, var(--color-text) 4%, transparent) 49%, color-mix(in srgb, var(--color-text) 4%, transparent) 51%, transparent 52%);
+  background-size: 72px 72px, 144px 144px;
   mask-image: radial-gradient(circle at center, black, transparent 74%);
 }
 
@@ -82,9 +92,23 @@ button {
 .glass-panel {
   border: 1px solid var(--color-border);
   background:
-    linear-gradient(145deg, color-mix(in srgb, var(--color-surface) 84%, transparent), color-mix(in srgb, var(--color-surface-strong) 62%, transparent));
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.16);
-  backdrop-filter: blur(22px);
+    linear-gradient(145deg, color-mix(in srgb, var(--color-surface) 92%, transparent), color-mix(in srgb, var(--color-surface-strong) 58%, transparent));
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.13);
+  backdrop-filter: blur(18px);
+}
+
+.museum-frame {
+  border: 1px solid var(--color-border);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--color-surface) 95%, transparent), color-mix(in srgb, var(--color-surface-strong) 70%, transparent));
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.22);
+}
+
+.heritage-band {
+  border: 1px solid var(--color-border);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--color-red) 13%, transparent), transparent 34%),
+    linear-gradient(135deg, color-mix(in srgb, var(--color-surface) 88%, transparent), color-mix(in srgb, var(--color-surface-strong) 70%, transparent));
 }
 
 .section-shell {

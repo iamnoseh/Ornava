@@ -15,7 +15,7 @@ export function FeaturesSection({ copy }: FeaturesSectionProps) {
 
       <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {copy.items.map((item) => (
-          <article className="glass-panel rounded-[28px] p-6" key={item.title}>
+          <article className="glass-panel rounded-lg p-6" key={item.title}>
             <h3 className="font-display text-2xl font-semibold text-[var(--color-text)]">{item.title}</h3>
             <p className="mt-3 text-sm leading-7 text-[var(--color-muted)]">{item.description}</p>
           </article>

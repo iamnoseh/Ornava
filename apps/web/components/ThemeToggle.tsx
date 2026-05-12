@@ -11,6 +11,7 @@ interface ThemeToggleProps {
 
 export function ThemeToggle({ theme, copy, onToggle }: ThemeToggleProps) {
   const label = theme === "dark" ? copy.themeLight : copy.themeDark;
+  const mark = theme === "dark" ? "L" : "D";
 
   return (
     <button
@@ -20,7 +21,7 @@ export function ThemeToggle({ theme, copy, onToggle }: ThemeToggleProps) {
       type="button"
     >
       <span className="grid h-6 w-6 place-items-center rounded-full bg-[var(--color-gold)] text-xs text-[#16110d]">
-        {theme === "dark" ? "☾" : "☼"}
+        {mark}
       </span>
       <span className="hidden sm:inline">{label}</span>
     </button>

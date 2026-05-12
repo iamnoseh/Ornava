@@ -48,7 +48,7 @@ export function UploadDropzone({ file, disabled, error, copy, onFileChange }: Up
     <div>
       <motion.button
         className={cx(
-          "group relative flex min-h-[300px] w-full overflow-hidden rounded-[24px] border border-dashed p-4 text-left transition",
+          "group relative flex min-h-[300px] w-full overflow-hidden rounded-lg border border-dashed p-4 text-left transition",
           isDragging
             ? "border-[var(--color-gold)] bg-[color-mix(in_srgb,var(--color-gold)_14%,transparent)]"
             : "border-[color-mix(in_srgb,var(--color-gold)_38%,transparent)] bg-[var(--color-soft)]",
@@ -110,7 +110,7 @@ export function UploadDropzone({ file, disabled, error, copy, onFileChange }: Up
       )}
 
       {error && (
-        <p className="mt-3 rounded-2xl border border-[color-mix(in_srgb,var(--color-red)_42%,transparent)] bg-[color-mix(in_srgb,var(--color-red)_14%,transparent)] px-4 py-3 text-sm text-[var(--color-text)]">
+        <p className="mt-3 rounded-lg border border-[color-mix(in_srgb,var(--color-red)_42%,transparent)] bg-[color-mix(in_srgb,var(--color-red)_14%,transparent)] px-4 py-3 text-sm text-[var(--color-text)]">
           {error}
         </p>
       )}

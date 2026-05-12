@@ -16,20 +16,20 @@ interface HeaderProps {
 export function Header({ copy, language, theme, onLanguageChange, onThemeToggle }: HeaderProps) {
   const links = [
     { href: "#features", label: copy.nav.features },
-    { href: "#how-it-works", label: copy.nav.howItWorks },
-    { href: "#about", label: copy.nav.about },
+    { href: "#process", label: copy.nav.process },
+    { href: "#principles", label: copy.nav.principles },
     { href: "#restoration", label: copy.nav.restoration },
   ];
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-bg)_82%,transparent)] backdrop-blur-2xl">
-      <div className="section-shell flex min-h-20 flex-wrap items-center justify-between gap-4 py-3">
+    <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-bg)_88%,transparent)] backdrop-blur-2xl">
+      <div className="section-shell flex min-h-16 flex-wrap items-center justify-between gap-4 py-3">
         <a className="flex items-center gap-3" href="#top">
-          <span className="grid h-11 w-11 place-items-center rounded-full border border-[var(--color-gold)] bg-[color-mix(in_srgb,var(--color-gold)_14%,transparent)] font-display text-xl text-[var(--color-gold)]">
+          <span className="grid h-10 w-10 place-items-center rounded-full border border-[var(--color-gold)] bg-[color-mix(in_srgb,var(--color-gold)_12%,transparent)] font-display text-xl text-[var(--color-gold)]">
             O
           </span>
           <span>
-            <span className="block font-display text-2xl font-semibold text-[var(--color-text)]">Ornava</span>
+            <span className="block font-display text-2xl font-semibold leading-none text-[var(--color-text)]">Ornava</span>
             <span className="block text-xs text-[var(--color-muted)]">{copy.header.productLabel}</span>
           </span>
         </a>

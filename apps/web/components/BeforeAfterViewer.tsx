@@ -23,7 +23,7 @@ export function BeforeAfterViewer({ result, copy }: BeforeAfterViewerProps) {
 
 function ImagePane({ label, src }: { label: string; src: string }) {
   return (
-    <figure className="overflow-hidden rounded-[24px] border border-[var(--color-border)] bg-[var(--color-soft)]">
+    <figure className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-soft)]">
       <div className="flex items-center justify-between border-b border-[var(--color-border)] px-4 py-3">
         <figcaption className="text-sm font-semibold text-[var(--color-text)]">{label}</figcaption>
       </div>

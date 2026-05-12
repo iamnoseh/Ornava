@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { AboutSection } from "@/components/AboutSection";
 import { FeaturesSection } from "@/components/FeaturesSection";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
@@ -50,8 +49,7 @@ export function HomeExperience() {
         <HeroSection copy={copy.hero} />
         <RestorationWorkspace copy={copy} />
         <FeaturesSection copy={copy.features} />
-        <HowItWorksSection copy={copy.howItWorks} />
-        <AboutSection copy={copy.about} />
+        <HowItWorksSection copy={copy.process} />
         <PrinciplesSection copy={copy.principles} />
         <Footer copy={copy} />
       </div>

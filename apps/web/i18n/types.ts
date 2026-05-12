@@ -1,9 +1,9 @@
-export type Language = "tg" | "ru" | "en";
+export type Language = "en" | "ru";
 
 export interface NavigationCopy {
   features: string;
-  howItWorks: string;
-  about: string;
+  process: string;
+  principles: string;
   restoration: string;
 }
 
@@ -21,6 +21,7 @@ export interface Dictionary {
     subtitle: string;
     primaryCta: string;
     secondaryCta: string;
+    visualLabel: string;
     principles: string[];
   };
   workspace: {
@@ -59,16 +60,17 @@ export interface Dictionary {
     recordEyebrow: string;
     recordTitle: string;
     download: string;
-    provider: string;
+    method: string;
+    methodAi: string;
+    methodSafe: string;
     mode: string;
-    fallback: string;
-    fallbackUsed: string;
-    fallbackNo: string;
-    aiModel: string;
-    none: string;
-    providerFallback: string;
+    status: string;
+    statusComplete: string;
+    technicalDetails: string;
+    technicalIntro: string;
     quotaTitle: string;
     quotaMessage: string;
+    successMessage: string;
   };
   features: {
     eyebrow: string;
@@ -76,16 +78,10 @@ export interface Dictionary {
     description: string;
     items: Array<{ title: string; description: string }>;
   };
-  howItWorks: {
+  process: {
     eyebrow: string;
     title: string;
     steps: Array<{ title: string; description: string }>;
-  };
-  about: {
-    eyebrow: string;
-    title: string;
-    body: string;
-    warning: string;
   };
   principles: {
     eyebrow: string;

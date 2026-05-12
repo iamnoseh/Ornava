@@ -22,7 +22,7 @@ export function LoadingOverlay({ visible, progress, copy }: LoadingOverlayProps)
       initial={{ opacity: 0 }}
       exit={{ opacity: 0 }}
     >
-      <div className="glass-panel w-full max-w-sm rounded-[28px] p-7 text-center shadow-glow">
+      <div className="glass-panel w-full max-w-sm rounded-lg p-7 text-center shadow-glow">
         <motion.div
           animate={{ rotate: 360 }}
           className="mx-auto mb-6 h-14 w-14 rounded-full border border-[color-mix(in_srgb,var(--color-gold)_24%,transparent)] border-t-[var(--color-gold)]"
