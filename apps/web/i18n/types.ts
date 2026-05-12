@@ -67,17 +67,7 @@ export interface Dictionary {
     statusSuccessBadge: string;
     statusFallbackBadge: string;
     developerDiagnostics: string;
-    method: string;
-    methodAi: string;
-    methodSafe: string;
     mode: string;
-    status: string;
-    statusComplete: string;
-    technicalDetails: string;
-    technicalIntro: string;
-    quotaTitle: string;
-    quotaMessage: string;
-    successMessage: string;
   };
   features: {
     eyebrow: string;
