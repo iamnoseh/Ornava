@@ -18,8 +18,8 @@ const config: Config = {
         glass: "0 24px 80px rgba(0, 0, 0, 0.32)",
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
-        display: ["var(--font-cormorant)", "Georgia", "serif"],
+        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["Cormorant Garamond", "Georgia", "serif"],
       },
     },
   },

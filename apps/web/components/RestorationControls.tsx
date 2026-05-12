@@ -76,8 +76,8 @@ export function RestorationControls({
           onChange={(event) => onUseAiChange(event.target.checked)}
           type="checkbox"
         />
-        <span className="relative h-7 w-12 rounded-full bg-white/14 transition peer-checked:bg-heritage-gold">
-          <span className="absolute left-1 top-1 h-5 w-5 rounded-full bg-heritage-paper transition peer-checked:translate-x-5 peer-checked:bg-heritage-black" />
+        <span className="relative h-7 w-12 rounded-full bg-white/14 transition peer-checked:bg-heritage-gold peer-checked:[&>span]:translate-x-5">
+          <span className="absolute left-1 top-1 h-5 w-5 rounded-full bg-heritage-paper transition peer-checked:bg-heritage-black" />
         </span>
       </label>
     </div>
