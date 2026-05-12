@@ -50,7 +50,7 @@ export function RestorationWorkspace({ copy }: RestorationWorkspaceProps) {
       setProgress(100);
       setResult(response);
 
-      if (response.provider_error_code === "gemini_quota_exceeded") {
+      if (response.provider_error_code === "openai_quota_exceeded" || response.provider_error_code === "openai_rate_limited") {
         setError(copy.errors.quotaExceeded);
       } else if (response.fallback_used && response.provider_error_code) {
         setError(copy.errors.fallback);

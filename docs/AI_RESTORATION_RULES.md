@@ -4,7 +4,7 @@
 
 Ornava must not:
 
-- Invent new ornaments.
+- Invent unsupported ornaments.
 - Add new objects.
 - Remove cultural details.
 - Redesign patterns.
@@ -12,7 +12,7 @@ Ornava must not:
 - Change faces.
 - Change text.
 - Change borders.
-- Hallucinate missing details.
+- Hallucinate unsupported details.
 - Crop the image.
 - Change aspect ratio.
 
@@ -22,38 +22,38 @@ Ornava may:
 
 - Reduce noise.
 - Improve contrast.
-- Correct mild color cast.
-- Lightly sharpen existing details.
-- Upscale while preserving aspect ratio.
+- Recover faded colors naturally.
+- Restore realistic material richness and texture.
+- Repair damage conservatively when clearly implied by the source.
 - Improve visibility of existing content.
+- Upscale while preserving aspect ratio.
 
-## Provider Requirements
+## OpenAI Prompt Requirements
 
-Any future Gemini or OpenAI integration must:
+OpenAI restoration must make the same object look professionally cleaned, repaired, color-recovered, and preserved while retaining identity, geometry, motifs, cultural authenticity, material realism, faces, and text.
 
-- Use prompts that explicitly forbid invention.
-- Preserve source composition and geometry.
-- Return traceable metadata about provider, model, and mode.
-- Be reviewed against cultural-authenticity test images.
-- Provide a fallback to deterministic restoration.
+Supported artifact types:
 
-## Gemini Prompt Requirements
+- carpets
+- ornaments
+- ceramics
+- pottery
+- textiles
+- atlas clothing
+- manuscripts
+- old photographs
+- cultural objects
+- historical artworks
 
-Gemini prompts must explicitly instruct the model to:
+Mode behavior:
 
-- Preserve exact composition.
-- Preserve original geometry and aspect ratio.
-- Preserve all ornaments, motifs, lines, patterns, borders, text, and faces if present.
-- Avoid inventing details.
-- Avoid adding or removing objects.
-- Avoid stylization.
-- Avoid beautification beyond restoration.
-- Enhance clarity only.
-- Keep historical authenticity.
+- `conservative`: identity preservation, minimal reconstruction, mild repair, natural color recovery.
+- `balanced`: stronger cleaning and color recovery, moderate repair, exact identity preservation.
+- `strong`: near-new professional restoration where strongly implied, while preserving identity and geometry.
 
 ## Runtime Safety
 
-AI restoration is disabled by default with `USE_AI_RESTORATION=false`. Requests can opt in with `use_ai=true`. If Gemini is missing, unavailable, or returns no valid image, the API must use deterministic restoration and report `fallback_used=true`.
+Requests can opt in with `use_ai=true`, or deployments can enable AI by default with `USE_AI_RESTORATION=true`. If OpenAI is missing, unavailable, rate-limited, over quota, or returns no valid image, the API must use deterministic restoration and report `fallback_used=true` with an `openai_*` error code.
 
 ## Review Standard
 

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from pathlib import Path
 
 from app.schemas.restoration import RestorationMode
 
@@ -10,6 +11,7 @@ class AIRestorationRequest:
     mode: RestorationMode
     mime_type: str
     preservation_rules: str
+    image_path: Path | None = None
 
 
 @dataclass(frozen=True)

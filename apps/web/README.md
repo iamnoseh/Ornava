@@ -77,10 +77,10 @@ npm run typecheck
 5. Toggle dark/light mode if desired.
 6. Drop or select a `.jpg`, `.jpeg`, `.png`, or `.webp`.
 7. Choose `conservative`, `balanced`, or `strong`.
-8. Toggle AI restoration only when Gemini is configured.
+8. Toggle AI restoration only when a backend AI provider is configured.
 9. Click the restore button.
 
-The UI shows before/after images, provider metadata, fallback status, provider diagnostics, and a download button after a real backend response.
+The UI shows before/after images, clean restoration status, fallback messaging, and a download button after a real backend response. Provider diagnostics are not shown to normal users.
 
 ## Expected Backend Response Shape
 

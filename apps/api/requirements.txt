@@ -5,4 +5,4 @@ numpy
 opencv-python
 python-multipart
 pydantic-settings
-google-genai
+openai

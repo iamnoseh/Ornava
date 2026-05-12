@@ -4,8 +4,6 @@
 
 Returns API health and environment information.
 
-### Response
-
 ```json
 {
   "status": "ok",
@@ -16,7 +14,7 @@ Returns API health and environment information.
 
 ## POST `/api/restorations`
 
-Restores one uploaded image. Deterministic restoration remains the default. Gemini can be requested when configured.
+Restores one uploaded image. Deterministic restoration is used when `use_ai=false`. OpenAI restoration is used when `use_ai=true`. If OpenAI fails, deterministic restoration is used as fallback.
 
 ### Request
 
@@ -24,7 +22,7 @@ Multipart form data:
 
 - `file`: required image file.
 - `mode`: optional restoration mode. Defaults to `conservative`.
-- `use_ai`: optional boolean. `true` requests Gemini, `false` forces deterministic restoration, omitted uses `USE_AI_RESTORATION`.
+- `use_ai`: optional boolean. `true` requests OpenAI, `false` forces deterministic restoration, omitted uses `USE_AI_RESTORATION`.
 
 Accepted modes:
 
@@ -32,38 +30,15 @@ Accepted modes:
 - `balanced`
 - `strong`
 
-Accepted extensions:
+Accepted extensions and MIME types:
 
-- `.jpg`
-- `.jpeg`
-- `.png`
-- `.webp`
-
-Accepted MIME types:
-
-- `image/jpeg`
-- `image/png`
-- `image/webp`
+- `.jpg`, `.jpeg` / `image/jpeg`
+- `.png` / `image/png`
+- `.webp` / `image/webp`
 
 ### Response
 
-```json
-{
-  "id": "01HX...",
-  "original_file_name": "ornament.jpg",
-  "input_url": "/uploads/input/01HX...jpg",
-  "output_url": "/uploads/output/01HX...jpg",
-  "provider": "deterministic",
-  "fallback_used": false,
-  "ai_model": null,
-  "provider_error_code": null,
-  "provider_error_message": null,
-  "mode": "conservative",
-  "message": "Restoration completed using deterministic conservative enhancement."
-}
-```
-
-When Gemini succeeds:
+The response shape is stable for deterministic, OpenAI, and fallback paths:
 
 ```json
 {
@@ -71,45 +46,50 @@ When Gemini succeeds:
   "original_file_name": "ornament.jpg",
   "input_url": "/uploads/input/01HX...jpg",
   "output_url": "/uploads/output/01HX...png",
-  "provider": "gemini",
+  "provider": "openai",
   "fallback_used": false,
-  "ai_model": "gemini-2.0-flash-preview-image-generation",
+  "ai_model": "gpt-image-1",
   "provider_error_code": null,
   "provider_error_message": null,
-  "mode": "conservative",
-  "message": "Restoration completed using gemini with authenticity safeguards."
+  "mode": "balanced",
+  "message": "Restoration completed using openai with authenticity safeguards."
 }
 ```
 
-When Gemini is requested but unavailable:
+When `use_ai=false`:
 
 ```json
 {
-  "id": "01HX...",
-  "original_file_name": "ornament.jpg",
-  "input_url": "/uploads/input/01HX...jpg",
-  "output_url": "/uploads/output/01HX...jpg",
   "provider": "deterministic",
-  "fallback_used": true,
+  "fallback_used": false,
   "ai_model": null,
-  "provider_error_code": "gemini_api_key_missing",
-  "provider_error_message": "Gemini API key is missing.",
-  "mode": "conservative",
-  "message": "AI restoration was requested but no configured provider was available. Used deterministic conservative fallback."
+  "provider_error_code": null,
+  "provider_error_message": null
 }
 ```
 
-Provider error codes are short, non-secret diagnostics:
+When OpenAI fails:
 
-- `gemini_api_key_missing`
-- `gemini_model_not_configured`
-- `gemini_quota_exceeded`
-- `gemini_sdk_error`
-- `gemini_no_image_output`
-- `gemini_invalid_image_output`
-- `gemini_unknown_error`
+```json
+{
+  "provider": "deterministic",
+  "fallback_used": true,
+  "ai_model": null,
+  "provider_error_code": "openai_api_key_missing",
+  "provider_error_message": "OpenAI API key is missing."
+}
+```
 
-When `use_ai=false`, `provider_error_code` and `provider_error_message` are always `null`.
+Supported AI provider error codes:
+
+- `openai_api_key_missing`
+- `openai_model_not_configured`
+- `openai_request_failed`
+- `openai_no_image_output`
+- `openai_invalid_image_output`
+- `openai_quota_exceeded`
+- `openai_rate_limited`
+- `openai_unknown_error`
 
 ### Errors
 
@@ -119,30 +99,24 @@ When `use_ai=false`, `provider_error_code` and `provider_error_message` are alwa
 - `413 file_too_large`
 - `500 processing_error`
 
-AI provider failures should not return `500` if deterministic fallback succeeds.
+OpenAI failures should not return `500` if deterministic fallback succeeds.
 
 ## Manual Test Cases
 
-- Deterministic: send `use_ai=false`; expect provider diagnostics to be `null`.
-- Gemini: set `GEMINI_API_KEY`, use a model that supports image responses, and send `use_ai=true`.
-- Missing key fallback: unset `GEMINI_API_KEY` and send `use_ai=true`; expect `provider=deterministic`, `fallback_used=true`, and `provider_error_code=gemini_api_key_missing`.
-- Quota fallback: if Gemini returns `429 RESOURCE_EXHAUSTED`, expect `provider=deterministic`, `fallback_used=true`, `provider_error_code=gemini_quota_exceeded`, and `provider_error_message=Gemini quota or rate limit exceeded.`
-- Invalid file: upload a `.txt` file; expect `400 unsupported_file_type`.
-- Large file: upload a file above `MAX_UPLOAD_MB`; expect `413 file_too_large`.
+- Deterministic: send `use_ai=false`; expect `provider=deterministic`, `fallback_used=false`, and null provider diagnostics.
+- OpenAI: set `OPENAI_API_KEY` and send `use_ai=true`; expect `provider=openai`, `fallback_used=false`.
+- Missing key fallback: unset `OPENAI_API_KEY` and send `use_ai=true`; expect `provider=deterministic`, `fallback_used=true`, and `provider_error_code=openai_api_key_missing`.
+- Quota/rate-limit fallback: expect `provider=deterministic`, `fallback_used=true`, and `provider_error_code=openai_quota_exceeded` or `openai_rate_limited`.
 
-## Gemini Debugging
-
-The configured image model is:
+## OpenAI Setup
 
 ```text
-GEMINI_MODEL=gemini-2.0-flash-preview-image-generation
+USE_AI_RESTORATION=true
+OPENAI_API_KEY=
+OPENAI_IMAGE_MODEL=gpt-image-1
+OPENAI_IMAGE_SIZE=auto
+OPENAI_IMAGE_QUALITY=high
+OPENAI_IMAGE_OUTPUT_FORMAT=png
 ```
 
-If `provider_error_code` remains `gemini_sdk_error`, inspect backend logs for the non-secret `exception_class` and short sanitized `debug` value. Common checks:
-
-- Confirm `google-genai` is installed in the active virtual environment.
-- Confirm the API key is present in `apps/api/.env`.
-- Confirm the server was restarted after changing `.env`.
-- Confirm the configured model supports image output.
-- Confirm the Google AI Studio project has access to the Gemini API.
-- If the log mentions `429` or `RESOURCE_EXHAUSTED`, Ornava should report `gemini_quota_exceeded`.
+The API key is read only by the backend. It must not be sent to the frontend or committed to source control.

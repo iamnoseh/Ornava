@@ -1,12 +1,12 @@
 # Ornava
 
-Ornava restores old, damaged, low-quality historical and national ornament images using conservative, authenticity-first image restoration.
+Ornava restores old, damaged, low-quality historical and national ornament images using authenticity-first restoration.
 
-The MVP backend uses deterministic image processing before any generative AI. It improves readability through safe denoising, contrast enhancement, color correction, sharpening, and optional upscaling while preserving the original composition and geometry.
+The backend uses deterministic image processing when AI is disabled and OpenAI image restoration when AI is requested. If OpenAI is missing, unavailable, rate-limited, over quota, or returns invalid output, Ornava falls back to deterministic restoration without breaking the public API contract.
 
 ## Product Rule
 
-Ornava must enhance and restore the original image only. It must not invent new ornaments, add new objects, remove cultural details, redesign patterns, change geometry, change faces, change text, change borders, or hallucinate missing details.
+Ornava must enhance and restore the original image only. It must not invent new ornaments, add new objects, remove cultural details, redesign patterns, change geometry, change faces, change text, change borders, or hallucinate unsupported details.
 
 ## Repository Layout
 
@@ -18,200 +18,99 @@ samples/         Sample input and expected reference folders
 scripts/         Future maintenance scripts
 ```
 
-## Setup
+## Backend Setup
 
 ```powershell
 cd apps/api
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-```
-
-Optional Gemini setup:
-
-```powershell
 Copy-Item ..\..\.env.example .env
 notepad .env
 ```
 
-Set `GEMINI_API_KEY` in `.env` only. Keep `USE_AI_RESTORATION=false` unless AI restoration should be enabled by default.
+Set `OPENAI_API_KEY` in `.env` only. Do not commit real API keys.
 
-## Run Backend
-
-```powershell
-uvicorn app.main:app --reload
-```
-
-The API will run at:
-
-```text
-http://127.0.0.1:8000
-```
-
-## Run Frontend
-
-```powershell
-cd ..\web
-npm install
-Copy-Item .env.local.example .env.local
-npm run dev
-```
-
-The web app will run at:
-
-```text
-http://localhost:3000
-```
-
-## Test Health Endpoint
-
-PowerShell:
-
-```powershell
-Invoke-RestMethod -Uri http://127.0.0.1:8000/api/health
-```
-
-curl:
-
-```bash
-curl http://127.0.0.1:8000/api/health
-```
-
-## Test Image Upload
-
-PowerShell:
-
-```powershell
-Invoke-RestMethod `
-  -Uri http://127.0.0.1:8000/api/restorations `
-  -Method Post `
-  -Form @{
-    file = Get-Item "..\..\samples\input\sample.jpg"
-    mode = "conservative"
-  }
-```
-
-curl:
-
-```bash
-curl -X POST "http://127.0.0.1:8000/api/restorations" \
-  -F "file=@../../samples/input/sample.jpg" \
-  -F "mode=conservative"
-```
-
-## Configuration
-
-Copy `.env.example` to `.env` if you need local overrides.
+## Backend Configuration
 
 ```text
 APP_NAME=Ornava
 ENVIRONMENT=development
 MAX_UPLOAD_MB=10
-AI_PROVIDER=gemini
-USE_AI_RESTORATION=false
-GEMINI_API_KEY=
-GEMINI_MODEL=gemini-2.0-flash-preview-image-generation
+USE_AI_RESTORATION=true
+OPENAI_API_KEY=
+OPENAI_IMAGE_MODEL=gpt-image-1
+OPENAI_IMAGE_SIZE=auto
+OPENAI_IMAGE_QUALITY=high
+OPENAI_IMAGE_OUTPUT_FORMAT=png
+UPLOAD_INPUT_DIR=uploads/input
+UPLOAD_OUTPUT_DIR=uploads/output
 ```
 
-## Current Limitations
-
-- Gemini is optional and disabled by default. If enabled but unavailable, the API falls back to deterministic restoration.
-- Gemini image output depends on using a model that supports image responses.
-- No database or user accounts.
-- Local filesystem storage only.
-- Uploaded input and output files are served by the local FastAPI app for MVP convenience.
-- No frontend is included yet.
-
-## AI Restoration Tests
-
-Deterministic mode:
+## Run Backend
 
 ```powershell
-Invoke-RestMethod `
-  -Uri http://127.0.0.1:8000/api/restorations `
-  -Method Post `
-  -Form @{
-    file = Get-Item "..\..\samples\input\sample.jpg"
-    mode = "conservative"
-    use_ai = "false"
-  }
+cd apps/api
+.\.venv\Scripts\Activate.ps1
+uvicorn app.main:app --reload
 ```
 
-Expected diagnostic fields: `provider_error_code` and `provider_error_message` are `null`.
+The API runs at `http://127.0.0.1:8000`.
 
-Gemini mode:
+## Run Frontend
 
 ```powershell
-Invoke-RestMethod `
-  -Uri http://127.0.0.1:8000/api/restorations `
-  -Method Post `
-  -Form @{
-    file = Get-Item "..\..\samples\input\sample.jpg"
-    mode = "conservative"
-    use_ai = "true"
-  }
+cd apps/web
+npm install
+npm run dev
 ```
 
-Expected diagnostic fields: `provider_error_code` and `provider_error_message` are `null` when Gemini succeeds.
+The web app runs at `http://localhost:3000`.
 
-Fallback with missing API key:
+## Manual Tests
+
+Deterministic:
 
 ```powershell
-$env:GEMINI_API_KEY=""
-Invoke-RestMethod `
-  -Uri http://127.0.0.1:8000/api/restorations `
-  -Method Post `
-  -Form @{
-    file = Get-Item "..\..\samples\input\sample.jpg"
-    mode = "conservative"
-    use_ai = "true"
+Invoke-RestMethod -Uri http://127.0.0.1:8000/api/restorations -Method Post -Form @{
+  file = Get-Item "C:\path\to\historical-image.jpg"
+  mode = "conservative"
+  use_ai = "false"
 }
 ```
 
-Expected diagnostic fields: `fallback_used` is `true` and `provider_error_code` is `gemini_api_key_missing`.
+Expected: `provider=deterministic`, `fallback_used=false`, `provider_error_code=$null`.
 
-Quota or rate-limit fallback:
-
-If Gemini returns `429 RESOURCE_EXHAUSTED`, the request falls back to deterministic restoration with:
-
-```text
-provider_error_code=gemini_quota_exceeded
-provider_error_message=Gemini quota or rate limit exceeded.
-```
-
-If `provider_error_code` remains `gemini_sdk_error`, check:
-
-- `GEMINI_MODEL=gemini-2.0-flash-preview-image-generation`
-- `google-genai` is installed in the active `apps/api/.venv`
-- the API key is valid and enabled for the Gemini API
-- the server was restarted after editing `.env`
-- the backend logs for `exception_class` and the short sanitized `debug` value
-- whether the configured model is available in your Google AI Studio account and region
-- if logs mention `429` or `RESOURCE_EXHAUSTED`, Ornava should report `gemini_quota_exceeded`
-
-Invalid file:
+OpenAI:
 
 ```powershell
-Set-Content -Path .\not-an-image.txt -Value "not an image"
-Invoke-RestMethod `
-  -Uri http://127.0.0.1:8000/api/restorations `
-  -Method Post `
-  -Form @{
-    file = Get-Item ".\not-an-image.txt"
-    mode = "conservative"
-  }
+Invoke-RestMethod -Uri http://127.0.0.1:8000/api/restorations -Method Post -Form @{
+  file = Get-Item "C:\path\to\historical-image.jpg"
+  mode = "balanced"
+  use_ai = "true"
+}
 ```
 
-Large file:
+Expected: `provider=openai`, `fallback_used=false`, `provider_error_code=$null`.
+
+Missing OpenAI key fallback:
 
 ```powershell
-$bytes = New-Object byte[] (11MB)
-[System.IO.File]::WriteAllBytes(".\too-large.jpg", $bytes)
-Invoke-RestMethod `
-  -Uri http://127.0.0.1:8000/api/restorations `
-  -Method Post `
-  -Form @{
-    file = Get-Item ".\too-large.jpg"
-    mode = "conservative"
-  }
+$env:OPENAI_API_KEY=""
+Invoke-RestMethod -Uri http://127.0.0.1:8000/api/restorations -Method Post -Form @{
+  file = Get-Item "C:\path\to\historical-image.jpg"
+  mode = "conservative"
+  use_ai = "true"
+}
 ```
+
+Expected: `provider=deterministic`, `fallback_used=true`, `provider_error_code=openai_api_key_missing`.
+
+Quota or rate-limit fallback returns deterministic output with `openai_quota_exceeded` or `openai_rate_limited`.
+
+## Current Limitations
+
+- No database or user accounts.
+- Local filesystem storage only.
+- Uploaded input and output files are served by the local FastAPI app for MVP convenience.
+- AI restoration depends on OpenAI image API availability and account limits.

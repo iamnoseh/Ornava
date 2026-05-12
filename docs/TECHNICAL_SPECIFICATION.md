@@ -7,12 +7,18 @@
 - Pillow
 - OpenCV
 - NumPy
-- Google Gen AI SDK (`google-genai`)
+- OpenAI Python SDK (`openai`)
 - Local filesystem storage
 
 ## Architecture
 
-Routes are thin HTTP adapters. Business logic lives in services. Validation and filename generation live in utilities. AI providers live behind an abstraction and are called only by the restoration service when AI restoration is explicitly enabled.
+Routes are thin HTTP adapters. Business logic lives in services. Validation and filename generation live in utilities. AI restoration lives behind an abstraction and is called only by the restoration service when AI restoration is enabled.
+
+```text
+route -> RestorationService -> OpenAIRestorationProvider
+```
+
+The frontend calls the same public API regardless of deterministic, OpenAI, or fallback behavior.
 
 ## Backend Modules
 
@@ -22,8 +28,8 @@ Routes are thin HTTP adapters. Business logic lives in services. Validation and 
 - `app/api/routes/health.py`: health endpoint.
 - `app/api/routes/restoration.py`: upload endpoint.
 - `app/services/storage_service.py`: local file writes.
-- `app/services/restoration_service.py`: deterministic restoration pipeline.
-- `app/services/ai/*`: provider interfaces, prompt rules, factory, and Gemini implementation.
+- `app/services/restoration_service.py`: deterministic pipeline, OpenAI orchestration, and fallback handling.
+- `app/services/ai/*`: provider interface, OpenAI prompt rules, factory, and OpenAI implementation.
 - `app/utils/image_validation.py`: extension, MIME, size, and image validation.
 - `app/utils/file_names.py`: safe unique filename generation.
 
@@ -36,7 +42,7 @@ The API stores files under:
 
 These directories are ignored except for `.gitkeep`.
 
-## Restoration Pipeline
+## Deterministic Restoration Pipeline
 
 1. Read and validate upload.
 2. Verify image with Pillow.
@@ -48,24 +54,36 @@ These directories are ignored except for `.gitkeep`.
 8. Optionally upscale for balanced or strong mode.
 9. Save restored output without cropping or aspect-ratio changes.
 
-## AI Provider Abstraction
+## OpenAI Image Restoration
 
-`AIRestorationProvider` defines the interface for AI-assisted restoration. Routes do not import or call Gemini directly. The flow is:
+`OpenAIRestorationProvider` uses the official OpenAI SDK from the backend only. It sends the validated source image and preservation prompt to the image editing API, requests the configured output format, validates returned image bytes with Pillow, and returns bytes plus metadata through `AIRestorationResult`.
 
-```text
-route -> RestorationService -> AIRestorationProvider
-```
+OpenAI configuration:
 
-Gemini is selected through `AI_PROVIDER=gemini`. OpenAI remains a placeholder behind the same interface.
+- `USE_AI_RESTORATION` controls the default AI behavior when `use_ai` is omitted.
+- `OPENAI_API_KEY` must be set locally to call OpenAI.
+- `OPENAI_IMAGE_MODEL` defaults to `gpt-image-1`.
+- `OPENAI_IMAGE_SIZE` defaults to `auto`.
+- `OPENAI_IMAGE_QUALITY` defaults to `high`.
+- `OPENAI_IMAGE_OUTPUT_FORMAT` defaults to `png`.
 
-## AI Configuration
+OpenAI failures are converted to short provider error codes:
 
-- `USE_AI_RESTORATION=false` by default.
-- `GEMINI_API_KEY` must be set locally to call Gemini.
-- `GEMINI_MODEL` defaults to `gemini-2.0-flash-preview-image-generation`, a model documented by Google for image responses with `response_modalities=["TEXT", "IMAGE"]`.
+- `openai_api_key_missing`
+- `openai_model_not_configured`
+- `openai_request_failed`
+- `openai_no_image_output`
+- `openai_invalid_image_output`
+- `openai_quota_exceeded`
+- `openai_rate_limited`
+- `openai_unknown_error`
 
-If Gemini is not configured, fails, or returns no valid image bytes, Ornava falls back to deterministic restoration and marks `fallback_used=true`.
+The provider never overwrites uploaded input files and never logs or returns API keys.
 
-## Gemini Limitation
+## Fallback Behavior
 
-Gemini image restoration depends on the selected model returning image output. Some Gemini models can understand images but only return text. Those models will trigger deterministic fallback rather than failing the request.
+If `use_ai=false`, deterministic restoration is used and provider diagnostics are null.
+
+If `use_ai=true` and OpenAI succeeds, the response uses `provider="openai"`, `fallback_used=false`, and the configured OpenAI model.
+
+If OpenAI is missing, unavailable, rate-limited, over quota, or returns invalid image bytes, the response uses deterministic output with `provider="deterministic"`, `fallback_used=true`, and an `openai_*` error code.

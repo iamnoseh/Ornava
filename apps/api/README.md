@@ -1,6 +1,6 @@
 # Ornava API
 
-FastAPI backend for the Ornava restoration MVP.
+FastAPI backend for Ornava restoration.
 
 ## Run Locally
 
@@ -8,21 +8,22 @@ FastAPI backend for the Ornava restoration MVP.
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+Copy-Item ..\..\.env.example .env
 uvicorn app.main:app --reload
 ```
 
-## Optional Gemini Configuration
-
-Create `apps/api/.env` from the root `.env.example` and set:
+## OpenAI Configuration
 
 ```text
-AI_PROVIDER=gemini
-USE_AI_RESTORATION=false
-GEMINI_API_KEY=
-GEMINI_MODEL=gemini-2.0-flash-preview-image-generation
+USE_AI_RESTORATION=true
+OPENAI_API_KEY=
+OPENAI_IMAGE_MODEL=gpt-image-1
+OPENAI_IMAGE_SIZE=auto
+OPENAI_IMAGE_QUALITY=high
+OPENAI_IMAGE_OUTPUT_FORMAT=png
 ```
 
-Gemini is disabled by default. Use `use_ai=true` per request or set `USE_AI_RESTORATION=true` to opt in globally.
+`OPENAI_API_KEY` is backend-only. Never expose it to the frontend or commit it.
 
 ## Endpoints
 
@@ -33,9 +34,51 @@ Gemini is disabled by default. Use `use_ai=true` per request or set `USE_AI_REST
 
 - `file`: image upload
 - `mode`: `conservative`, `balanced`, or `strong`
-- `use_ai`: optional boolean override for Gemini usage
+- `use_ai`: optional boolean override for AI usage
 
-The response includes `provider`, `fallback_used`, and `ai_model` metadata.
+The response includes `provider`, `fallback_used`, `ai_model`, and safe provider error metadata.
+
+If OpenAI fails, the backend falls back to deterministic restoration and returns a safe code such as `openai_api_key_missing`, `openai_quota_exceeded`, `openai_rate_limited`, `openai_no_image_output`, or `openai_request_failed`.
+
+## Manual Test Commands
+
+Deterministic:
+
+```powershell
+Invoke-RestMethod -Uri http://127.0.0.1:8000/api/restorations -Method Post -Form @{
+  file = Get-Item "C:\path\to\historical-image.jpg"
+  mode = "conservative"
+  use_ai = "false"
+}
+```
+
+OpenAI:
+
+```powershell
+Invoke-RestMethod -Uri http://127.0.0.1:8000/api/restorations -Method Post -Form @{
+  file = Get-Item "C:\path\to\historical-image.jpg"
+  mode = "balanced"
+  use_ai = "true"
+}
+```
+
+Missing key fallback:
+
+```powershell
+$env:OPENAI_API_KEY=""
+Invoke-RestMethod -Uri http://127.0.0.1:8000/api/restorations -Method Post -Form @{
+  file = Get-Item "C:\path\to\historical-image.jpg"
+  mode = "conservative"
+  use_ai = "true"
+}
+```
+
+Expected quota/rate-limit fallback codes:
+
+```text
+openai_quota_exceeded
+openai_rate_limited
+```
 
 ## Storage
 

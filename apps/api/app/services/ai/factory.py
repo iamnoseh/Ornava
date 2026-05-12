@@ -1,22 +1,24 @@
 from app.core.config import Settings
 from app.services.ai.base import AIRestorationProvider, AIProviderError
-from app.services.ai.gemini_provider import GeminiRestorationProvider
+from app.services.ai.openai_provider import OpenAIRestorationProvider
 
 
-def build_ai_provider(settings: Settings) -> AIRestorationProvider | None:
-    if settings.ai_provider.lower() != "gemini":
-        return None
-
-    api_key = settings.gemini_api_key.strip() if settings.gemini_api_key else ""
-    model = settings.gemini_model.strip() if settings.gemini_model else ""
+def build_ai_provider(settings: Settings) -> AIRestorationProvider:
+    api_key = settings.openai_api_key.strip() if settings.openai_api_key else ""
+    model = settings.openai_image_model.strip() if settings.openai_image_model else ""
 
     if not api_key:
-        raise AIProviderError("gemini_api_key_missing", "Gemini API key is missing.")
+        raise AIProviderError("openai_api_key_missing", "OpenAI API key is missing.")
 
     if not model:
-        raise AIProviderError("gemini_model_not_configured", "Gemini model is not configured.")
+        raise AIProviderError("openai_model_not_configured", "OpenAI image model is not configured.")
 
-    return GeminiRestorationProvider(
+    return OpenAIRestorationProvider(
         api_key=api_key,
         model=model,
+        size=settings.openai_image_size.strip() if settings.openai_image_size else "auto",
+        quality=settings.openai_image_quality.strip() if settings.openai_image_quality else "high",
+        output_format=settings.openai_image_output_format.strip()
+        if settings.openai_image_output_format
+        else "png",
     )

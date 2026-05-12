@@ -16,11 +16,9 @@ export function ResultPanel({ result, copy }: ResultPanelProps) {
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const resultCopy = copy.result;
   const isFallback = result.fallback_used;
-  const showDeveloperDiagnostics = process.env.NODE_ENV === "development";
   const statusBadge = isFallback ? resultCopy.statusFallbackBadge : resultCopy.statusSuccessBadge;
   const statusMessage = isFallback ? resultCopy.fallbackMessage : resultCopy.readyMessage;
   const modeLabel = copy.controls.modes[result.mode]?.label ?? result.mode;
-  const diagnostics = buildDiagnostics(result);
 
   async function handleDownload() {
     if (isDownloading) {
@@ -101,18 +99,6 @@ export function ResultPanel({ result, copy }: ResultPanelProps) {
         </p>
       </div>
 
-      {showDeveloperDiagnostics && diagnostics.length > 0 && (
-        <details className="mt-6 rounded-lg bg-[color-mix(in_srgb,var(--color-soft)_72%,transparent)] px-4 py-3 text-xs text-[var(--color-muted)]">
-          <summary className="cursor-pointer font-medium text-[var(--color-muted)]">
-            {resultCopy.developerDiagnostics}
-          </summary>
-          <dl className="mt-3 grid gap-2">
-            {diagnostics.map((item) => (
-              <TechnicalMeta key={item.label} label={item.label} value={item.value} />
-            ))}
-          </dl>
-        </details>
-      )}
     </aside>
   );
 }
@@ -133,22 +119,4 @@ function getDownloadPath(outputUrl: string): string {
   } catch {
     return outputUrl.split(/[?#]/)[0] ?? "";
   }
-}
-
-function buildDiagnostics(result: RestorationResponse): Array<{ label: string; value: string }> {
-  return [
-    { label: "provider", value: result.provider },
-    { label: "provider_error_code", value: result.provider_error_code },
-    { label: "provider_error_message", value: result.provider_error_message },
-    { label: "ai_model", value: result.ai_model },
-  ].filter((item): item is { label: string; value: string } => Boolean(item.value));
-}
-
-function TechnicalMeta({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="grid gap-1 rounded-md bg-[color-mix(in_srgb,var(--color-bg)_32%,transparent)] p-2">
-      <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--color-muted)]">{label}</dt>
-      <dd className="break-words font-mono text-[11px] leading-5 text-[var(--color-muted)]">{value}</dd>
-    </div>
-  );
 }

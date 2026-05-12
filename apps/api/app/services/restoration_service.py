@@ -32,7 +32,7 @@ class RestorationService:
         restoration_id = unique_file_stem()
         input_name = build_file_name(restoration_id, upload.extension)
 
-        self.storage.save_input(input_name, upload.content)
+        input_path = self.storage.save_input(input_name, upload.content)
 
         provider_name = "deterministic"
         ai_model = None
@@ -50,26 +50,11 @@ class RestorationService:
             self._log_provider_fallback(
                 restoration_id,
                 mode,
-                provider_error_code,
-                provider_error_message,
-                ai_provider_error.exception_class,
-                ai_provider_error.debug_message,
-            )
-            message = (
-                f"AI restoration was requested but no configured provider was available. "
-                f"Used deterministic {mode.value} fallback."
-            )
-        elif use_ai and ai_provider is None:
-            restored = self._deterministic_or_error(upload.content, mode, upload.image_format)
-            output_extension = upload.extension
-            fallback_used = True
-            provider_error_code = "gemini_unknown_error"
-            provider_error_message = "Gemini provider is unavailable."
-            self._log_provider_fallback(
-                restoration_id,
-                mode,
-                provider_error_code,
-                provider_error_message,
+                ai_provider_name=self._provider_name_from_code(provider_error_code),
+                code=provider_error_code,
+                safe_message=provider_error_message,
+                exception_class=ai_provider_error.exception_class,
+                debug_message=ai_provider_error.debug_message,
             )
             message = (
                 f"AI restoration was requested but no configured provider was available. "
@@ -83,14 +68,15 @@ class RestorationService:
                         mode=mode,
                         mime_type=self._mime_type_for_format(upload.image_format),
                         preservation_rules=_PRESERVATION_RULES,
+                        image_path=input_path,
                     )
                 )
                 try:
                     output_format = verify_image_bytes(ai_result.image_bytes)
                 except Exception as exc:
                     raise AIProviderError(
-                        "gemini_invalid_image_output",
-                        "Gemini returned invalid image output.",
+                        f"{ai_result.provider}_invalid_image_output",
+                        f"{ai_result.provider.title()} returned invalid image output.",
                         exception_class=exc.__class__.__name__,
                         debug_message=self._sanitize_log_message(str(exc)),
                     ) from exc
@@ -108,33 +94,52 @@ class RestorationService:
                 self._log_provider_fallback(
                     restoration_id,
                     mode,
-                    provider_error_code,
-                    provider_error_message,
-                    exc.exception_class,
-                    exc.debug_message,
+                    ai_provider_name=ai_provider.provider_name,
+                    code=provider_error_code,
+                    safe_message=provider_error_message,
+                    exception_class=exc.exception_class,
+                    debug_message=exc.debug_message,
                 )
                 message = (
-                    f"Gemini restoration was unavailable or returned no valid image. "
+                    f"AI restoration was unavailable or returned no valid image. "
                     f"Used deterministic {mode.value} fallback."
                 )
             except Exception as exc:
                 restored = self._deterministic_or_error(upload.content, mode, upload.image_format)
                 output_extension = upload.extension
                 fallback_used = True
-                provider_error_code = "gemini_unknown_error"
-                provider_error_message = "Gemini restoration failed."
+                provider_error_code = f"{ai_provider.provider_name}_unknown_error"
+                provider_error_message = f"{ai_provider.provider_name.title()} restoration failed."
                 self._log_provider_fallback(
                     restoration_id,
                     mode,
-                    provider_error_code,
-                    provider_error_message,
-                    exc.__class__.__name__,
-                    self._sanitize_log_message(str(exc)),
+                    ai_provider_name=ai_provider.provider_name,
+                    code=provider_error_code,
+                    safe_message=provider_error_message,
+                    exception_class=exc.__class__.__name__,
+                    debug_message=self._sanitize_log_message(str(exc)),
                 )
                 message = (
-                    f"Gemini restoration was unavailable or returned no valid image. "
+                    f"AI restoration was unavailable or returned no valid image. "
                     f"Used deterministic {mode.value} fallback."
                 )
+        elif use_ai:
+            restored = self._deterministic_or_error(upload.content, mode, upload.image_format)
+            output_extension = upload.extension
+            fallback_used = True
+            provider_error_code = "openai_unknown_error"
+            provider_error_message = "OpenAI restoration failed."
+            self._log_provider_fallback(
+                restoration_id,
+                mode,
+                ai_provider_name="openai",
+                code=provider_error_code,
+                safe_message=provider_error_message,
+            )
+            message = (
+                f"AI restoration was unavailable or returned no valid image. "
+                f"Used deterministic {mode.value} fallback."
+            )
         else:
             restored = self._deterministic_or_error(upload.content, mode, upload.image_format)
             output_extension = upload.extension
@@ -160,14 +165,16 @@ class RestorationService:
     def _log_provider_fallback(
         restoration_id: str,
         mode: RestorationMode,
+        ai_provider_name: str | None,
         code: str,
         safe_message: str,
         exception_class: str | None = None,
         debug_message: str | None = None,
     ) -> None:
         logger.warning(
-            "AI restoration fallback used. id=%s provider=gemini mode=%s code=%s reason=%s exception_class=%s debug=%s",
+            "AI restoration fallback used. id=%s provider=%s mode=%s code=%s reason=%s exception_class=%s debug=%s",
             restoration_id,
+            ai_provider_name or "unknown",
             mode.value,
             code,
             safe_message,
@@ -178,12 +185,20 @@ class RestorationService:
     @staticmethod
     def _sanitize_log_message(message: str, max_length: int = 120) -> str:
         sanitized = re.sub(r"AIza[0-9A-Za-z_-]+", "[redacted]", message)
+        sanitized = re.sub(r"sk-[0-9A-Za-z_-]+", "[redacted]", sanitized)
         sanitized = re.sub(r"(?i)(api[_-]?key=)[^&\s]+", r"\1[redacted]", sanitized)
         sanitized = re.sub(r"(?i)(x-goog-api-key:?\s*)[^\s]+", r"\1[redacted]", sanitized)
+        sanitized = re.sub(r"(?i)(authorization:\s*bearer\s+)[^\s]+", r"\1[redacted]", sanitized)
         sanitized = " ".join(sanitized.split())
         if len(sanitized) > max_length:
             return f"{sanitized[: max_length - 3]}..."
         return sanitized
+
+    @staticmethod
+    def _provider_name_from_code(code: str | None) -> str | None:
+        if not code or "_" not in code:
+            return None
+        return code.split("_", 1)[0]
 
     def _deterministic_or_error(
         self,

@@ -5,7 +5,7 @@ export interface RestorationResponse {
   original_file_name: string;
   input_url: string;
   output_url: string;
-  provider: "deterministic" | "gemini" | string;
+  provider: "deterministic" | "openai" | string;
   fallback_used: boolean;
   ai_model: string | null;
   provider_error_code: string | null;

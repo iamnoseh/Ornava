@@ -76,7 +76,6 @@ export const dictionaries: Record<Language, Dictionary> = {
         "AI restoration is temporarily unavailable. Ornava completed a preservation-safe restoration instead.",
       statusSuccessBadge: "Restoration completed",
       statusFallbackBadge: "Safe restoration mode used",
-      developerDiagnostics: "Developer diagnostics",
       mode: "Strength",
     },
     features: {
@@ -106,7 +105,7 @@ export const dictionaries: Record<Language, Dictionary> = {
           description: "Use preservation-first AI enhancement when available and appropriate.",
         },
         {
-          title: "Safe deterministic restoration",
+          title: "Safe fallback restoration",
           description: "Complete a restrained restoration path that does not invent missing details.",
         },
       ],
@@ -216,7 +215,6 @@ export const dictionaries: Record<Language, Dictionary> = {
         "ИИ-реставрация временно недоступна. Ornava выполнила бережное восстановление без изменения оригинала.",
       statusSuccessBadge: "Restoration completed",
       statusFallbackBadge: "Safe restoration mode used",
-      developerDiagnostics: "Developer diagnostics",
       mode: "Сила",
     },
     features: {

@@ -66,7 +66,6 @@ export interface Dictionary {
     fallbackMessage: string;
     statusSuccessBadge: string;
     statusFallbackBadge: string;
-    developerDiagnostics: string;
     mode: string;
   };
   features: {

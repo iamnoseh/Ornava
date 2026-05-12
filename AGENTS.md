@@ -22,7 +22,7 @@ Restoration must preserve authenticity. The system may enhance visibility, reduc
 
 - Keep routes thin.
 - Keep image processing deterministic until a reviewed AI provider implementation is added.
-- Do not couple business logic or routes to Gemini/OpenAI SDKs.
+- Do not couple business logic or routes to provider SDKs.
 - Treat uploaded files as hostile input.
 - Preserve aspect ratio and original composition.
 - Prefer readable, small modules over broad utility files.
