@@ -17,7 +17,6 @@ export function Header({ copy, language, theme, onLanguageChange, onThemeToggle 
   const links = [
     { href: "#features", label: copy.nav.features },
     { href: "#process", label: copy.nav.process },
-    { href: "#principles", label: copy.nav.principles },
     { href: "#restoration", label: copy.nav.restoration },
   ];
 

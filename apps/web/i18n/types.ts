@@ -62,6 +62,11 @@ export interface Dictionary {
     download: string;
     downloading: string;
     downloadError: string;
+    readyMessage: string;
+    fallbackMessage: string;
+    statusSuccessBadge: string;
+    statusFallbackBadge: string;
+    developerDiagnostics: string;
     method: string;
     methodAi: string;
     methodSafe: string;

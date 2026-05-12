@@ -7,7 +7,6 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
 import { HowItWorksSection } from "@/components/HowItWorksSection";
-import { PrinciplesSection } from "@/components/PrinciplesSection";
 import { RestorationWorkspace } from "@/components/RestorationWorkspace";
 import { DEFAULT_LANGUAGE, dictionaries } from "@/i18n/dictionaries";
 import type { Language } from "@/i18n/types";
@@ -50,7 +49,6 @@ export function HomeExperience() {
         <RestorationWorkspace copy={copy} />
         <FeaturesSection copy={copy.features} />
         <HowItWorksSection copy={copy.process} />
-        <PrinciplesSection copy={copy.principles} />
         <Footer copy={copy} />
       </div>
     </main>
