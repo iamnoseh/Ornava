@@ -40,6 +40,6 @@ Authenticity is more important than beauty. Ornava should make the original imag
 - User accounts.
 - Database persistence.
 - Cloud storage.
-- AI provider calls.
+- Frontend-controlled AI review workflows beyond optional Gemini restoration.
 - Batch processing.
 - Manual masking or brush tools.

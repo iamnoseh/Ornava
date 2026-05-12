@@ -18,6 +18,7 @@
 - Add optional request IDs.
 - Add cleanup policy for old local uploads.
 - Add provider implementation once Gemini requirements are finalized.
+- Add automated Gemini provider tests with mocked SDK responses.
 
 ## Future Product Tasks
 

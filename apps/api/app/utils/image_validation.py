@@ -71,6 +71,10 @@ async def _read_with_size_limit(
 
 
 def _verify_image(content: bytes) -> str:
+    return verify_image_bytes(content)
+
+
+def verify_image_bytes(content: bytes) -> str:
     try:
         with Image.open(BytesIO(content)) as image:
             image.verify()

@@ -20,6 +20,21 @@ class AIRestorationResult:
     notes: str
 
 
+class AIProviderError(Exception):
+    def __init__(
+        self,
+        code: str,
+        safe_message: str,
+        exception_class: str | None = None,
+        debug_message: str | None = None,
+    ) -> None:
+        super().__init__(safe_message)
+        self.code = code
+        self.safe_message = safe_message
+        self.exception_class = exception_class
+        self.debug_message = debug_message
+
+
 class AIRestorationProvider(ABC):
     provider_name: str
 

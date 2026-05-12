@@ -7,11 +7,12 @@
 - Pillow
 - OpenCV
 - NumPy
+- Google Gen AI SDK (`google-genai`)
 - Local filesystem storage
 
 ## Architecture
 
-Routes are thin HTTP adapters. Business logic lives in services. Validation and filename generation live in utilities. AI providers live behind an abstraction and are not called by the MVP restoration flow.
+Routes are thin HTTP adapters. Business logic lives in services. Validation and filename generation live in utilities. AI providers live behind an abstraction and are called only by the restoration service when AI restoration is explicitly enabled.
 
 ## Backend Modules
 
@@ -22,7 +23,7 @@ Routes are thin HTTP adapters. Business logic lives in services. Validation and 
 - `app/api/routes/restoration.py`: upload endpoint.
 - `app/services/storage_service.py`: local file writes.
 - `app/services/restoration_service.py`: deterministic restoration pipeline.
-- `app/services/ai/*`: future provider interfaces.
+- `app/services/ai/*`: provider interfaces, prompt rules, factory, and Gemini implementation.
 - `app/utils/image_validation.py`: extension, MIME, size, and image validation.
 - `app/utils/file_names.py`: safe unique filename generation.
 
@@ -49,4 +50,22 @@ These directories are ignored except for `.gitkeep`.
 
 ## AI Provider Abstraction
 
-`AIRestorationProvider` defines the future interface for AI-assisted restoration. Gemini and OpenAI providers implement the interface as placeholders and raise `NotImplementedError` until real provider integrations are approved.
+`AIRestorationProvider` defines the interface for AI-assisted restoration. Routes do not import or call Gemini directly. The flow is:
+
+```text
+route -> RestorationService -> AIRestorationProvider
+```
+
+Gemini is selected through `AI_PROVIDER=gemini`. OpenAI remains a placeholder behind the same interface.
+
+## AI Configuration
+
+- `USE_AI_RESTORATION=false` by default.
+- `GEMINI_API_KEY` must be set locally to call Gemini.
+- `GEMINI_MODEL` defaults to `gemini-2.0-flash-preview-image-generation`, a model documented by Google for image responses with `response_modalities=["TEXT", "IMAGE"]`.
+
+If Gemini is not configured, fails, or returns no valid image bytes, Ornava falls back to deterministic restoration and marks `fallback_used=true`.
+
+## Gemini Limitation
+
+Gemini image restoration depends on the selected model returning image output. Some Gemini models can understand images but only return text. Those models will trigger deterministic fallback rather than failing the request.
