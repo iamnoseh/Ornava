@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
+import type { Dictionary } from "@/i18n/types";
 import { ACCEPTED_IMAGE_INPUT, validateImageFile } from "@/lib/file-validation";
 import { cx } from "@/lib/ui";
 
@@ -10,10 +11,11 @@ interface UploadDropzoneProps {
   file: File | null;
   disabled: boolean;
   error: string | null;
+  copy: Dictionary["upload"];
   onFileChange: (file: File | null, error?: string | null) => void;
 }
 
-export function UploadDropzone({ file, disabled, error, onFileChange }: UploadDropzoneProps) {
+export function UploadDropzone({ file, disabled, error, copy, onFileChange }: UploadDropzoneProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -37,7 +39,7 @@ export function UploadDropzone({ file, disabled, error, onFileChange }: UploadDr
       }
 
       const validationError = validateImageFile(nextFile);
-      onFileChange(validationError ? null : nextFile, validationError);
+      onFileChange(validationError ? null : nextFile, validationError ? copy.invalidFile : null);
     },
     [onFileChange],
   );
@@ -46,9 +48,11 @@ export function UploadDropzone({ file, disabled, error, onFileChange }: UploadDr
     <div>
       <motion.button
         className={cx(
-          "group relative flex min-h-[280px] w-full overflow-hidden rounded-[24px] border border-dashed p-4 text-left transition",
-          isDragging ? "border-heritage-gold bg-heritage-gold/[0.12]" : "border-heritage-gold/[0.32] bg-heritage-black/[0.24]",
-          disabled ? "cursor-not-allowed opacity-70" : "cursor-pointer hover:border-heritage-gold/70",
+          "group relative flex min-h-[300px] w-full overflow-hidden rounded-[24px] border border-dashed p-4 text-left transition",
+          isDragging
+            ? "border-[var(--color-gold)] bg-[color-mix(in_srgb,var(--color-gold)_14%,transparent)]"
+            : "border-[color-mix(in_srgb,var(--color-gold)_38%,transparent)] bg-[var(--color-soft)]",
+          disabled ? "cursor-not-allowed opacity-70" : "cursor-pointer hover:border-[var(--color-gold)]",
         )}
         disabled={disabled}
         onClick={() => inputRef.current?.click()}
@@ -67,19 +71,17 @@ export function UploadDropzone({ file, disabled, error, onFileChange }: UploadDr
       >
         {previewUrl ? (
           <img
-            alt="Selected ornament preview"
+            alt={copy.previewAlt}
             className="absolute inset-0 h-full w-full object-contain p-5"
             src={previewUrl}
           />
         ) : (
           <div className="m-auto max-w-md text-center">
-            <div className="mx-auto mb-5 grid h-16 w-16 place-items-center rounded-full border border-heritage-gold/30 bg-heritage-gold/10 text-2xl text-heritage-gold">
+            <div className="mx-auto mb-5 grid h-16 w-16 place-items-center rounded-full border border-[color-mix(in_srgb,var(--color-gold)_34%,transparent)] bg-[color-mix(in_srgb,var(--color-gold)_12%,transparent)] text-2xl text-[var(--color-gold)]">
               +
             </div>
-            <p className="font-display text-3xl text-heritage-paper">Place an ornament image</p>
-            <p className="mt-3 text-sm leading-6 text-heritage-paper/[0.62]">
-              Drop a damaged historical pattern or choose a file. JPG, PNG, and WEBP are supported.
-            </p>
+            <p className="font-display text-3xl text-[var(--color-text)]">{copy.title}</p>
+            <p className="mt-3 text-sm leading-6 text-[var(--color-muted)]">{copy.description}</p>
           </div>
         )}
 
@@ -94,20 +96,24 @@ export function UploadDropzone({ file, disabled, error, onFileChange }: UploadDr
       </motion.button>
 
       {file && (
-        <div className="mt-3 flex items-center justify-between gap-3 text-xs text-heritage-paper/[0.58]">
+        <div className="mt-3 flex items-center justify-between gap-3 text-xs text-[var(--color-muted)]">
           <span className="truncate">{file.name}</span>
           <button
-            className="text-heritage-gold transition hover:text-[#dfbd4a]"
+            className="text-[var(--color-gold)] transition hover:brightness-110"
             disabled={disabled}
             onClick={() => onFileChange(null, null)}
             type="button"
           >
-            Remove
+            {copy.remove}
           </button>
         </div>
       )}
 
-      {error && <p className="mt-3 rounded-2xl border border-heritage-red/40 bg-heritage-red/[0.16] px-4 py-3 text-sm text-[#f2c6bc]">{error}</p>}
+      {error && (
+        <p className="mt-3 rounded-2xl border border-[color-mix(in_srgb,var(--color-red)_42%,transparent)] bg-[color-mix(in_srgb,var(--color-red)_14%,transparent)] px-4 py-3 text-sm text-[var(--color-text)]">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
