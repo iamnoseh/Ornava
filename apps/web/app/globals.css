@@ -3,8 +3,37 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
-  background: #0f0f0f;
+  --color-bg: #0f0d0a;
+  --color-surface: #1b1712;
+  --color-surface-strong: #241d16;
+  --color-text: #e8dccb;
+  --color-muted: rgba(232, 220, 203, 0.68);
+  --color-soft: rgba(232, 220, 203, 0.1);
+  --color-border: rgba(232, 220, 203, 0.14);
+  --color-red: #7a1f1f;
+  --color-gold: #c9a227;
+  --color-bronze: #5c4632;
+  --hero-wash:
+    radial-gradient(circle at 16% 16%, rgba(122, 31, 31, 0.28), transparent 32rem),
+    radial-gradient(circle at 78% 8%, rgba(201, 162, 39, 0.18), transparent 34rem),
+    linear-gradient(135deg, #0f0d0a 0%, #18130f 54%, #0f0d0a 100%);
+}
+
+:root[data-theme="light"] {
+  --color-bg: #f7f1e7;
+  --color-surface: #fff8ec;
+  --color-surface-strong: #efe1cc;
+  --color-text: #2a2118;
+  --color-muted: rgba(42, 33, 24, 0.68);
+  --color-soft: rgba(92, 70, 50, 0.09);
+  --color-border: rgba(92, 70, 50, 0.18);
+  --color-red: #7a1f1f;
+  --color-gold: #b8911e;
+  --color-bronze: #5c4632;
+  --hero-wash:
+    radial-gradient(circle at 15% 16%, rgba(122, 31, 31, 0.12), transparent 31rem),
+    radial-gradient(circle at 82% 10%, rgba(184, 145, 30, 0.2), transparent 34rem),
+    linear-gradient(135deg, #f7f1e7 0%, #fff8ec 48%, #ecdcc4 100%);
 }
 
 * {
@@ -13,17 +42,15 @@
 
 html {
   min-height: 100%;
-  background: #0f0f0f;
+  scroll-behavior: smooth;
+  background: var(--color-bg);
 }
 
 body {
   min-height: 100%;
   margin: 0;
-  background:
-    radial-gradient(circle at 18% 18%, rgba(122, 31, 31, 0.32), transparent 34rem),
-    radial-gradient(circle at 78% 12%, rgba(201, 162, 39, 0.18), transparent 30rem),
-    linear-gradient(135deg, #0f0f0f 0%, #17120f 48%, #0f0f0f 100%);
-  color: #f7efe5;
+  background: var(--hero-wash);
+  color: var(--color-text);
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -32,18 +59,35 @@ input {
   font: inherit;
 }
 
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
 ::selection {
-  background: rgba(201, 162, 39, 0.35);
+  background: color-mix(in srgb, var(--color-gold) 35%, transparent);
 }
 
 .ornament-grid {
   background-image:
-    linear-gradient(rgba(232, 220, 203, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(232, 220, 203, 0.04) 1px, transparent 1px);
-  background-size: 54px 54px;
-  mask-image: radial-gradient(circle at center, black, transparent 72%);
+    linear-gradient(color-mix(in srgb, var(--color-text) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-text) 6%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(circle at center, black, transparent 74%);
 }
 
 .heritage-scrollbar {
-  scrollbar-color: rgba(201, 162, 39, 0.6) rgba(255, 255, 255, 0.08);
+  scrollbar-color: color-mix(in srgb, var(--color-gold) 70%, transparent) transparent;
+}
+
+.glass-panel {
+  border: 1px solid var(--color-border);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--color-surface) 84%, transparent), color-mix(in srgb, var(--color-surface-strong) 62%, transparent));
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(22px);
+}
+
+.section-shell {
+  width: min(1120px, calc(100% - 2rem));
+  margin-inline: auto;
 }

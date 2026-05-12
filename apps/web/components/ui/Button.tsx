@@ -13,10 +13,10 @@ export function Button({ children, className, variant = "primary", ...props }: B
       className={cx(
         "inline-flex min-h-12 items-center justify-center rounded-full px-6 text-sm font-semibold transition duration-200 disabled:cursor-not-allowed disabled:opacity-55",
         variant === "primary" &&
-          "bg-heritage-gold text-heritage-black shadow-glow hover:bg-[#d8b43a] focus:outline-none focus:ring-2 focus:ring-heritage-gold/60",
+          "bg-[var(--color-gold)] text-[#16110d] shadow-glow hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[var(--color-gold)]/60",
         variant === "secondary" &&
-          "border border-heritage-gold/[0.35] bg-white/[0.08] text-heritage-paper hover:bg-white/[0.12] focus:outline-none focus:ring-2 focus:ring-heritage-gold/40",
-        variant === "ghost" && "text-heritage-paper/80 hover:text-heritage-paper",
+          "border border-[color-mix(in_srgb,var(--color-gold)_40%,transparent)] bg-[var(--color-soft)] text-[var(--color-text)] hover:border-[var(--color-gold)] focus:outline-none focus:ring-2 focus:ring-[var(--color-gold)]/40",
+        variant === "ghost" && "text-[var(--color-muted)] hover:text-[var(--color-text)]",
         className,
       )}
       {...props}

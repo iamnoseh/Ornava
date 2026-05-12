@@ -11,8 +11,7 @@ export function Panel({ children, className }: PanelProps) {
   return (
     <section
       className={cx(
-        "border border-white/[0.12] bg-white/[0.075] shadow-glass backdrop-blur-2xl",
-        "rounded-[28px]",
+        "glass-panel rounded-[28px]",
         className,
       )}
     >
