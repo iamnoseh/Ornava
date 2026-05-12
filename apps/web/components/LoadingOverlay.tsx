@@ -2,12 +2,15 @@
 
 import { motion } from "framer-motion";
 
+import type { Dictionary } from "@/i18n/types";
+
 interface LoadingOverlayProps {
   visible: boolean;
   progress: number;
+  copy: Dictionary["loading"];
 }
 
-export function LoadingOverlay({ visible, progress }: LoadingOverlayProps) {
+export function LoadingOverlay({ visible, progress, copy }: LoadingOverlayProps) {
   if (!visible) {
     return null;
   }
@@ -15,24 +18,22 @@ export function LoadingOverlay({ visible, progress }: LoadingOverlayProps) {
   return (
     <motion.div
       animate={{ opacity: 1 }}
-      className="fixed inset-0 z-50 grid place-items-center bg-heritage-black/[0.72] px-6 backdrop-blur-xl"
+      className="fixed inset-0 z-50 grid place-items-center bg-black/60 px-6 backdrop-blur-xl"
       initial={{ opacity: 0 }}
       exit={{ opacity: 0 }}
     >
-      <div className="w-full max-w-sm rounded-[28px] border border-heritage-gold/20 bg-[#17120f]/90 p-7 text-center shadow-glow">
+      <div className="glass-panel w-full max-w-sm rounded-[28px] p-7 text-center shadow-glow">
         <motion.div
           animate={{ rotate: 360 }}
-          className="mx-auto mb-6 h-14 w-14 rounded-full border border-heritage-gold/20 border-t-heritage-gold"
+          className="mx-auto mb-6 h-14 w-14 rounded-full border border-[color-mix(in_srgb,var(--color-gold)_24%,transparent)] border-t-[var(--color-gold)]"
           transition={{ duration: 1.1, ease: "linear", repeat: Infinity }}
         />
-        <p className="font-display text-2xl text-heritage-paper">Restoring with restraint</p>
-        <p className="mt-2 text-sm leading-6 text-heritage-paper/[0.66]">
-          Preserving composition, borders, motifs, and original geometry.
-        </p>
+        <p className="font-display text-2xl text-[var(--color-text)]">{copy.title}</p>
+        <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">{copy.description}</p>
         <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/10">
           <motion.div
             animate={{ width: `${Math.max(progress, 8)}%` }}
-            className="h-full rounded-full bg-heritage-gold"
+            className="h-full rounded-full bg-[var(--color-gold)]"
           />
         </div>
       </div>
