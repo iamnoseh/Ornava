@@ -1,6 +1,6 @@
 # Ornava Web
 
-Production-quality frontend MVP for Ornava, built with Next.js App Router, TypeScript, Tailwind CSS, Framer Motion, and Axios.
+Production-quality multilingual frontend for Ornava, built with Next.js App Router, TypeScript, Tailwind CSS, Framer Motion, and Axios.
 
 ## Setup
 
@@ -17,25 +17,55 @@ The web app runs at:
 http://localhost:3000
 ```
 
-The backend should be running at:
-
-```text
-http://127.0.0.1:8000
-```
-
 ## Environment
 
 ```text
 NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
 ```
 
+The API URL is read from `NEXT_PUBLIC_API_BASE_URL`; components do not hardcode the backend URL.
+
+## Backend Dependency
+
+Start the FastAPI backend before testing restoration:
+
+```powershell
+cd apps/api
+.\.venv\Scripts\Activate.ps1
+uvicorn app.main:app --reload
+```
+
+## Language Support
+
+The UI supports:
+
+- Тоҷикӣ
+- Русский
+- English
+
+Tajik is the default language. Visible UI copy comes from the typed dictionaries in:
+
+```text
+i18n/dictionaries.ts
+i18n/types.ts
+```
+
+## Theme Support
+
+The header includes a light/dark theme toggle.
+
+- Initial theme respects system preference.
+- Theme choice is persisted in `localStorage`.
+- Dark mode uses a museum-tech palette.
+- Light mode uses an old-paper heritage palette.
+
 ## Scripts
 
 ```powershell
 npm run dev
+npm run lint
 npm run build
 npm run typecheck
-npm run lint
 ```
 
 ## Upload Flow
@@ -43,12 +73,14 @@ npm run lint
 1. Start the FastAPI backend from `apps/api`.
 2. Start the Next.js frontend from `apps/web`.
 3. Open `http://localhost:3000`.
-4. Drop or select a `.jpg`, `.jpeg`, `.png`, or `.webp`.
-5. Choose `conservative`, `balanced`, or `strong`.
-6. Toggle AI restoration only when Gemini is configured.
-7. Click `Restore Image`.
+4. Choose a language in the header.
+5. Toggle dark/light mode if desired.
+6. Drop or select a `.jpg`, `.jpeg`, `.png`, or `.webp`.
+7. Choose `conservative`, `balanced`, or `strong`.
+8. Toggle AI restoration only when Gemini is configured.
+9. Click the restore button.
 
-The UI shows before/after images, provider metadata, fallback status, provider diagnostics, and a download button.
+The UI shows before/after images, provider metadata, fallback status, provider diagnostics, and a download button after a real backend response.
 
 ## Expected Backend Response Shape
 

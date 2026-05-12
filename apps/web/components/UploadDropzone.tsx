@@ -41,7 +41,7 @@ export function UploadDropzone({ file, disabled, error, copy, onFileChange }: Up
       const validationError = validateImageFile(nextFile);
       onFileChange(validationError ? null : nextFile, validationError ? copy.invalidFile : null);
     },
-    [onFileChange],
+    [copy.invalidFile, onFileChange],
   );
 
   return (
