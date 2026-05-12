@@ -66,15 +66,15 @@ export function HomeExperience() {
       <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col px-5 py-6 sm:px-8 lg:px-10">
         <nav className="mb-10 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="grid h-11 w-11 place-items-center rounded-full border border-heritage-gold/35 bg-heritage-gold/12 font-display text-xl text-heritage-gold">
+            <div className="grid h-11 w-11 place-items-center rounded-full border border-heritage-gold/[0.35] bg-heritage-gold/[0.12] font-display text-xl text-heritage-gold">
               O
             </div>
             <div>
               <p className="font-display text-2xl text-heritage-paper">Ornava</p>
-              <p className="text-xs text-heritage-paper/46">Heritage restoration</p>
+              <p className="text-xs text-heritage-paper/[0.46]">Heritage restoration</p>
             </div>
           </div>
-          <div className="hidden rounded-full border border-white/10 bg-white/[0.055] px-4 py-2 text-sm text-heritage-paper/62 sm:block">
+          <div className="hidden rounded-full border border-white/10 bg-white/[0.055] px-4 py-2 text-sm text-heritage-paper/[0.62] sm:block">
             Preserve first. Enhance second.
           </div>
         </nav>
@@ -106,7 +106,7 @@ export function HomeExperience() {
               <Button className="w-full sm:w-auto" disabled={!canRestore} onClick={handleRestore}>
                 Restore Image
               </Button>
-              <p className="text-sm leading-6 text-heritage-paper/52">
+              <p className="text-sm leading-6 text-heritage-paper/[0.52]">
                 The backend returns deterministic fallback metadata when AI is unavailable.
               </p>
             </div>

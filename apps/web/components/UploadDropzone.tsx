@@ -47,7 +47,7 @@ export function UploadDropzone({ file, disabled, error, onFileChange }: UploadDr
       <motion.button
         className={cx(
           "group relative flex min-h-[280px] w-full overflow-hidden rounded-[24px] border border-dashed p-4 text-left transition",
-          isDragging ? "border-heritage-gold bg-heritage-gold/12" : "border-heritage-gold/32 bg-heritage-black/24",
+          isDragging ? "border-heritage-gold bg-heritage-gold/[0.12]" : "border-heritage-gold/[0.32] bg-heritage-black/[0.24]",
           disabled ? "cursor-not-allowed opacity-70" : "cursor-pointer hover:border-heritage-gold/70",
         )}
         disabled={disabled}
@@ -77,7 +77,7 @@ export function UploadDropzone({ file, disabled, error, onFileChange }: UploadDr
               +
             </div>
             <p className="font-display text-3xl text-heritage-paper">Place an ornament image</p>
-            <p className="mt-3 text-sm leading-6 text-heritage-paper/62">
+            <p className="mt-3 text-sm leading-6 text-heritage-paper/[0.62]">
               Drop a damaged historical pattern or choose a file. JPG, PNG, and WEBP are supported.
             </p>
           </div>
@@ -94,7 +94,7 @@ export function UploadDropzone({ file, disabled, error, onFileChange }: UploadDr
       </motion.button>
 
       {file && (
-        <div className="mt-3 flex items-center justify-between gap-3 text-xs text-heritage-paper/58">
+        <div className="mt-3 flex items-center justify-between gap-3 text-xs text-heritage-paper/[0.58]">
           <span className="truncate">{file.name}</span>
           <button
             className="text-heritage-gold transition hover:text-[#dfbd4a]"
@@ -107,7 +107,7 @@ export function UploadDropzone({ file, disabled, error, onFileChange }: UploadDr
         </div>
       )}
 
-      {error && <p className="mt-3 rounded-2xl border border-heritage-red/40 bg-heritage-red/16 px-4 py-3 text-sm text-[#f2c6bc]">{error}</p>}
+      {error && <p className="mt-3 rounded-2xl border border-heritage-red/40 bg-heritage-red/[0.16] px-4 py-3 text-sm text-[#f2c6bc]">{error}</p>}
     </div>
   );
 }

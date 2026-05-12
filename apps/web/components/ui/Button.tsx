@@ -15,7 +15,7 @@ export function Button({ children, className, variant = "primary", ...props }: B
         variant === "primary" &&
           "bg-heritage-gold text-heritage-black shadow-glow hover:bg-[#d8b43a] focus:outline-none focus:ring-2 focus:ring-heritage-gold/60",
         variant === "secondary" &&
-          "border border-heritage-gold/35 bg-white/8 text-heritage-paper hover:bg-white/12 focus:outline-none focus:ring-2 focus:ring-heritage-gold/40",
+          "border border-heritage-gold/[0.35] bg-white/[0.08] text-heritage-paper hover:bg-white/[0.12] focus:outline-none focus:ring-2 focus:ring-heritage-gold/40",
         variant === "ghost" && "text-heritage-paper/80 hover:text-heritage-paper",
         className,
       )}

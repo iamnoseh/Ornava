@@ -49,3 +49,21 @@ npm run lint
 7. Click `Restore Image`.
 
 The UI shows before/after images, provider metadata, fallback status, provider diagnostics, and a download button.
+
+## Expected Backend Response Shape
+
+```json
+{
+  "id": "01HX...",
+  "original_file_name": "ornament.jpg",
+  "input_url": "/uploads/input/01HX...jpg",
+  "output_url": "/uploads/output/01HX...jpg",
+  "provider": "deterministic",
+  "fallback_used": false,
+  "ai_model": null,
+  "provider_error_code": null,
+  "provider_error_message": null,
+  "mode": "conservative",
+  "message": "Restoration completed using deterministic conservative enhancement."
+}
+```

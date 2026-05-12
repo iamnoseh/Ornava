@@ -15,7 +15,7 @@ export function LoadingOverlay({ visible, progress }: LoadingOverlayProps) {
   return (
     <motion.div
       animate={{ opacity: 1 }}
-      className="fixed inset-0 z-50 grid place-items-center bg-heritage-black/72 px-6 backdrop-blur-xl"
+      className="fixed inset-0 z-50 grid place-items-center bg-heritage-black/[0.72] px-6 backdrop-blur-xl"
       initial={{ opacity: 0 }}
       exit={{ opacity: 0 }}
     >
@@ -26,7 +26,7 @@ export function LoadingOverlay({ visible, progress }: LoadingOverlayProps) {
           transition={{ duration: 1.1, ease: "linear", repeat: Infinity }}
         />
         <p className="font-display text-2xl text-heritage-paper">Restoring with restraint</p>
-        <p className="mt-2 text-sm leading-6 text-heritage-paper/66">
+        <p className="mt-2 text-sm leading-6 text-heritage-paper/[0.66]">
           Preserving composition, borders, motifs, and original geometry.
         </p>
         <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/10">

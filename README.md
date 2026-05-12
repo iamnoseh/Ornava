@@ -12,6 +12,7 @@ Ornava must enhance and restore the original image only. It must not invent new 
 
 ```text
 apps/api/        FastAPI backend
+apps/web/        Next.js frontend
 docs/            Product and technical documentation
 samples/         Sample input and expected reference folders
 scripts/         Future maintenance scripts
@@ -45,6 +46,21 @@ The API will run at:
 
 ```text
 http://127.0.0.1:8000
+```
+
+## Run Frontend
+
+```powershell
+cd ..\web
+npm install
+Copy-Item .env.local.example .env.local
+npm run dev
+```
+
+The web app will run at:
+
+```text
+http://localhost:3000
 ```
 
 ## Test Health Endpoint
